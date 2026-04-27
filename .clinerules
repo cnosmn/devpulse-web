@@ -1,0 +1,36 @@
+# devpulse-web/ (Frontend) Kuralları
+
+## Stack ve Kütüphaneler
+- Next.js 14 (App Router)
+- React 18, TypeScript 5+
+- TailwindCSS, shadcn/ui, Tremor / Recharts
+- Zod (Validation)
+- React Query (Server state / API Data fetch)
+- NextAuth 4.x
+- Zustand (Global Client State)
+
+## Klasör Yapısı
+- `src/app/`: Tüm page, layout, loading, error bileşenleri (server component kuralına göre) buraya dahil.
+- `src/components/ui/`: Sadece shadcn jenerik bileşenleri (Button, Input vb.)
+- `src/components/charts/`: Grafik ve görselleştirme sarmalayıcıları.
+- `src/components/dashboard/`: Projeye özgü iş katmanını tutan spesifik alan parçaları.
+- `src/lib/`: Utils fonksiyonları, Axios instance'ı, genel yardımcılar.
+- `src/hooks/`: React Query custom hook'ları öncelikli olmak üzere.
+
+## Component / Modül Yazım Kuralları
+- Next.js App Router default olarak "Server Component" tır. Sadece state, effect, event listener (onClick vb.) gerektiren interaktif parçalar için dosyanın en üstüne `"use client";` eklenmelidir.
+- Veri getirme işlemleri client-side yapılacaksa mutlaka React Query hook'ları (`useQuery`, `useMutation`) olarak ayrıştırılmalıdır, component içinde doğrudan fetch yapılmamalıdır.
+- Tailwind class class'ları çok uzarsa veya karmaşık şartlara girerse `clsx` ve `tailwind-merge` (`cn` utility fonksiyonu) kullanılmalıdır.
+
+## State Management Kuralları
+- Çoğu veri backend'den asenkron geleceği için state büyük ölçüde `React Query` ile yönetilecektir.
+- UI state (örn: açılan modal, filtrelemelerde string arama metni vb.) global olacak kadar büyükse `Zustand` kullanılmalıdır. Redux veya Context API kullanılmayacaktır.
+
+## Test Yazım Kuralları
+- React Testing Library ve Jest (veya Vitest)
+- Birim testleri kritik component'leri (örneğin skor hesaplayan helper fonksiyonlar) mutlaka kapsayacaktır.
+
+## Uygulamaya Özel YASAK Listesi
+- Backend mantığını veya DB isteğini (ORM vs.) Next.js Router (Server component olsa dahi) veya Route handler içine yazmak yasaktır. Her zaman `devpulse-api` REST API'sine istek atılacaktır.
+- CSS Modules veya SCSS dahil edilmeyecektir. Yalnızca Tailwind.
+- Sadece render edilmeyi bekleyen dum/presentation componentların asenkron logic ile kirlenmesi yasaktır. Container/Presenter pattern'a yakınsadığımız hook izolasyonu kullanılacaktır.
