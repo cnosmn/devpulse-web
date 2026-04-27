@@ -22,6 +22,10 @@
 - Veri getirme işlemleri client-side yapılacaksa mutlaka React Query hook'ları (`useQuery`, `useMutation`) olarak ayrıştırılmalıdır, component içinde doğrudan fetch yapılmamalıdır.
 - Tailwind class class'ları çok uzarsa veya karmaşık şartlara girerse `clsx` ve `tailwind-merge` (`cn` utility fonksiyonu) kullanılmalıdır.
 
+## Resposive tasarım
+- tasarım olarak modern kullanıcı dostu ve kullanıcı deneyimi yüksek bir tasarım olsun
+- sayfa ve bileşenler tüm mobil cihazlarda sorunsuz çalışsın ve full responsive şekilde olsun
+
 ## State Management Kuralları
 - Çoğu veri backend'den asenkron geleceği için state büyük ölçüde `React Query` ile yönetilecektir.
 - UI state (örn: açılan modal, filtrelemelerde string arama metni vb.) global olacak kadar büyükse `Zustand` kullanılmalıdır. Redux veya Context API kullanılmayacaktır.
