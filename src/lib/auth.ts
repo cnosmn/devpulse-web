@@ -43,15 +43,20 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
       if (account) {
         token.accessToken = account.access_token;
+      }
+      if (user) {
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       // @ts-expect-error: NextAuth Session type doesn't include accessToken by default
       session.accessToken = token.accessToken;
+      // @ts-expect-error: NextAuth Session type doesn't include user.id by default
+      session.user.id = token.id;
       return session;
     },
   },
