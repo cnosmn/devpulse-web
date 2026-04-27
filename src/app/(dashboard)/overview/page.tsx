@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import api from "@/lib/api-client";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ActivityHeatmap } from "@/components/charts/activity-heatmap";
 import { 
   Code, 
   GitCommit, 
@@ -15,6 +16,7 @@ import {
 interface MetricsResponse {
   success: boolean;
   data: {
+    heatmap: { date: string; count: number }[];
     summary: {
       totalRepos: number;
       totalCommits: number;
@@ -91,19 +93,13 @@ export default function OverviewPage() {
         />
       </div>
 
-      {/* Gelecek aşamalarda buraya grafikler ve heatmap eklenecek */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium">Aktivite Akışı</h3>
-            <span className="text-xs text-muted-foreground">Yakında</span>
-          </div>
-          <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg bg-accent/20">
-            <p className="text-muted-foreground text-sm">Burada yakında aktivite grafikleri ve repo detayları yer alacak.</p>
-          </div>
-        </Card>
-        <Card className="col-span-3 p-6">
-          <h3 className="text-lg font-medium mb-4">En Aktif Gün</h3>
+        <ActivityHeatmap 
+          data={metrics?.data.heatmap} 
+          isLoading={isMetricsLoading} 
+        />
+        <Card className="col-span-3 p-6 border-none bg-card/50 backdrop-blur-xl shadow-lg">
+          <h3 className="text-lg font-semibold tracking-tight mb-4">En Aktif Gün</h3>
           <div className="flex flex-col items-center justify-center h-[300px] space-y-4">
             {isScoreLoading ? (
               <Skeleton className="h-12 w-32" />
