@@ -13,9 +13,7 @@ api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
       const session = await getSession();
-      // @ts-expect-error: NextAuth Session type doesn't include accessToken by default
       if (session?.accessToken) {
-        // @ts-expect-error: accessToken is injected into session in callbacks
         config.headers.Authorization = `Bearer ${session.accessToken}`;
       }
     } catch (error) {

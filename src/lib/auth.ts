@@ -29,8 +29,7 @@ export const authOptions: NextAuthOptions = {
             },
             body: JSON.stringify({
               githubId: account.providerAccountId,
-              // @ts-expect-error: profile.login is available in Github profile
-              username: profile?.login || user.name,
+              username: (profile as any)?.login || user.name,
               email: user.email,
               avatarUrl: user.image,
               accessToken: account.access_token,
@@ -53,10 +52,8 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // @ts-expect-error: NextAuth Session type doesn't include accessToken by default
       session.accessToken = token.accessToken;
-      // @ts-expect-error: NextAuth Session type doesn't include user.id by default
-      session.user.id = token.id;
+      session.user.id = token.id as string;
       return session;
     },
   },

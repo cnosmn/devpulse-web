@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function ProjectsPage() {
   const { data: session } = useSession();
   
-  // @ts-expect-error: user.id is added in session callback
   const userId = session?.user?.id;
 
   const { data: projectsResponse, isLoading } = useQuery({

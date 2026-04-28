@@ -36,7 +36,6 @@ interface ScoreResponse {
 export default function OverviewPage() {
   const { data: session } = useSession();
   
-  // @ts-expect-error: user.id is added in session callback
   const userId = session?.user?.id;
 
   const { data: metrics, isLoading: isMetricsLoading } = useQuery<MetricsResponse>({
