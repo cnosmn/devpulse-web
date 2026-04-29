@@ -21,8 +21,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "github") {
         try {
           const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
-          // Backend API'sine sync isteği at
-          await fetch(`${backendUrl}/v1/auth/sync`, {
+          const response = await fetch(`${backendUrl}/v1/auth/sync`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -35,9 +34,15 @@ export const authOptions: NextAuthOptions = {
               accessToken: account.access_token,
             }),
           });
-        } catch (error) {
-          console.error("Backend sync error:", error);
-          // Login akışını bozmamak için hata fırlatmıyoruz
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error("Backend sync failed:", errorData.message || response.statusText);
+            throw new Error(errorData.message || "Backend synchronization failed");
+          }
+        } catch (error: any) {
+          console.error("Auth callback error:", error);
+          throw error;
         }
       }
       return true;
