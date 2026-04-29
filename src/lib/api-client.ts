@@ -1,8 +1,11 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getSession } from "next-auth/react";
 
+const baseUrlEnv = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = baseUrlEnv ? (baseUrlEnv.endsWith('/v1') ? baseUrlEnv : `${baseUrlEnv}/v1`) : "http://localhost:5001/v1";
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/v1",
+  baseURL,
   headers: {
     "Content-Type": "application/json",
   },

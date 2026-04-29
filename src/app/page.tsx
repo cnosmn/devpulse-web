@@ -31,9 +31,16 @@ export default function Home() {
               <p className="text-xs text-muted-foreground">{session.user?.email}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={() => signOut()}>
-            Çıkış Yap
-          </Button>
+          <div className="flex gap-4">
+            <Link href="/dashboard">
+              <Button variant="default">
+                Dashboard'a Git
+              </Button>
+            </Link>
+            <Button variant="outline" onClick={() => signOut()}>
+              Çıkış Yap
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-4 text-center">

@@ -25,7 +25,7 @@ export default function LoginPage() {
         <Button
           variant="default"
           className="w-full h-12 text-lg font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
-          onClick={() => signIn("github", { callbackUrl: "/" })}
+          onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
         >
           <LogIn className="mr-2 h-5 w-5" />
           DevPulse&apos;a GitHub ile Devam Et

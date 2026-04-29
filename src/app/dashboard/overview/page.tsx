@@ -71,7 +71,7 @@ export default function OverviewPage() {
           value={metrics?.data.summary.totalCommits}
           icon={GitCommit}
           isLoading={isMetricsLoading}
-          description="Tüm zamanların commit sayısı"
+          description="Bu yılın toplam commit sayısı"
         />
         <StatCard
           title="Aktif Repolar"
