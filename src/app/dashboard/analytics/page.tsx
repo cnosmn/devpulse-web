@@ -15,10 +15,33 @@ import {
   Pie, 
   Cell,
   LineChart,
-  Line
+  Line,
+  AreaChart,
+  Area
 } from "recharts";
-import { BarChart3, Clock, Globe, PieChart as PieChartIcon } from "lucide-react";
+import { BarChart3, Clock, Globe, PieChart as PieChartIcon, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Custom Tooltip Component for better readability
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-background/95 backdrop-blur-md border border-border p-3 rounded-xl shadow-2xl">
+        <p className="text-xs font-bold text-muted-foreground mb-1 uppercase tracking-wider">{label}</p>
+        <div className="flex items-center gap-2">
+          <div 
+            className="h-2 w-2 rounded-full" 
+            style={{ backgroundColor: payload[0].color || payload[0].fill }} 
+          />
+          <p className="text-sm font-semibold text-foreground">
+            {payload[0].value} Aktivite
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function AnalyticsPage() {
   const { data: session } = useSession();
@@ -67,115 +90,134 @@ export default function AnalyticsPage() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Hourly Activity */}
-        <div className="rounded-xl border bg-card/50 backdrop-blur-xl p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-6">
-            <Clock className="h-4 w-4 text-primary" />
-            <h3 className="font-semibold">Saatlik Aktivite</h3>
+        <div className="rounded-2xl border bg-card/40 backdrop-blur-xl p-6 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-blue-500/10 rounded-md">
+                <Clock className="h-4 w-4 text-blue-500" />
+              </div>
+              <h3 className="font-bold tracking-tight">Saatlik Aktivite</h3>
+            </div>
           </div>
-          <div className="h-[300px] w-full">
+          <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analytics?.hourlyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+              <BarChart data={analytics?.hourlyData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" opacity={0.4} />
                 <XAxis 
                   dataKey="hour" 
                   fontSize={10} 
                   tickLine={false} 
                   axisLine={false}
                   interval={3}
+                  stroke="hsl(var(--muted-foreground))"
                 />
-                <YAxis fontSize={10} tickLine={false} axisLine={false} width={30} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: "hsl(var(--card))", 
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "8px",
-                    fontSize: "12px"
-                  }} 
+                <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.1 }} />
+                <Bar 
+                  dataKey="count" 
+                  fill="url(#barGradient)" 
+                  radius={[4, 4, 0, 0]} 
+                  barSize={12} 
                 />
-                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={12} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Language Distribution */}
-        <div className="rounded-xl border bg-card/50 backdrop-blur-xl p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-6">
-            <Globe className="h-4 w-4 text-primary" />
-            <h3 className="font-semibold">Dil Dağılımı</h3>
+        <div className="rounded-2xl border bg-card/40 backdrop-blur-xl p-6 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-purple-500/10 rounded-md">
+                <Globe className="h-4 w-4 text-purple-500" />
+              </div>
+              <h3 className="font-bold tracking-tight">Dil Dağılımı</h3>
+            </div>
           </div>
-          <div className="h-[300px] w-full">
+          <div className="h-[280px] w-full relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={analytics?.languageData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
+                  innerRadius={70}
+                  outerRadius={90}
+                  paddingAngle={8}
                   dataKey="value"
+                  stroke="none"
                 >
                   {analytics?.languageData.map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: "hsl(var(--card))", 
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "8px",
-                    fontSize: "12px"
-                  }} 
-                />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="mt-4 flex flex-wrap justify-center gap-4">
-              {analytics?.languageData.slice(0, 5).map((lang: any, index: number) => (
-                <div key={index} className="flex items-center gap-1.5">
-                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: lang.color }} />
-                  <span className="text-[10px] font-medium">{lang.name}</span>
-                </div>
-              ))}
+            {/* Center Text */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">En Çok</span>
+              <span className="text-lg font-black tracking-tight">{analytics?.languageData[0]?.name || "N/A"}</span>
             </div>
+          </div>
+          <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
+            {analytics?.languageData.slice(0, 4).map((lang: any, index: number) => (
+              <div key={index} className="flex items-center gap-2 px-2 py-1 bg-muted/30 rounded-full border border-border/50">
+                <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: lang.color }} />
+                <span className="text-[10px] font-bold text-foreground/80">{lang.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Weekly Activity Trends */}
-      <div className="rounded-xl border bg-card/50 backdrop-blur-xl p-6 shadow-sm">
-        <div className="flex items-center gap-2 mb-6">
-          <PieChartIcon className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold">Haftalık Performans Trendi</h3>
+      <div className="rounded-2xl border bg-card/40 backdrop-blur-xl p-6 shadow-sm hover:shadow-md transition-all">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-green-500/10 rounded-md">
+              <TrendingUp className="h-4 w-4 text-green-500" />
+            </div>
+            <h3 className="font-bold tracking-tight">Haftalık Performans Trendi</h3>
+          </div>
         </div>
-        <div className="h-[300px] w-full">
+        <div className="h-[320px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={analytics?.dailyData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+            <AreaChart data={analytics?.dailyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" opacity={0.4} />
               <XAxis 
                 dataKey="day" 
                 fontSize={10} 
                 tickLine={false} 
                 axisLine={false}
+                stroke="hsl(var(--muted-foreground))"
+                dy={10}
               />
-              <YAxis fontSize={10} tickLine={false} axisLine={false} width={30} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: "hsl(var(--card))", 
-                  borderColor: "hsl(var(--border))",
-                  borderRadius: "8px",
-                  fontSize: "12px"
-                }} 
-              />
-              <Line 
+              <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
+              <Tooltip content={<CustomTooltip />} />
+              <Area 
                 type="monotone" 
                 dataKey="count" 
                 stroke="hsl(var(--primary))" 
-                strokeWidth={2} 
-                dot={{ r: 4, fill: "hsl(var(--primary))" }}
-                activeDot={{ r: 6 }}
+                strokeWidth={3} 
+                fillOpacity={1} 
+                fill="url(#areaGradient)"
+                dot={{ r: 4, fill: "hsl(var(--background))", stroke: "hsl(var(--primary))", strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 0 }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
